@@ -11,7 +11,7 @@ In this tutorial, we'll delve into the process of provisioning and managing AWS 
 ## Table of contents
 
 - [Terraform providers](#terraform-providers)
-- [Provider versions](#terraform-provider-versions)
+- [Terraform init and provider versions](#terraform-init-and-provider-versions)
 - [Terraform plan](#terraform-plan)
 - [Terraform apply](#deep-dive-into-terraform-apply)
 
@@ -21,42 +21,23 @@ Terraform providers are a key component of Terraform that enable it to interact 
 
 ### Using Terraform Providers
 
-To use a Terraform provider, you first need to declare it in your Terraform configuration file (main.tf). This declaration specifies which provider to use and any necessary authentication details.
+To use a Terraform provider, you first need to declare it in your Terraform configuration file (main.tf). This declaration specifies which provider to use and any necessary details.
 
 For example, to use the AWS provider:
 ```
 provider "aws" {
-  region     = "us-west-2"
+  region     = "us-east-1"
 }
 ```
 
-n this example, we specify the AWS provider and set the region. These values determine where and how Terraform will work with AWS.
+In this example, we specify the AWS provider and set the region. These values determine where and how Terraform will work with AWS.
 
 Once the provider is declared, you can begin defining AWS resources in your Terraform configuration.
 
-
-### Example: Provisioning an AWS EC2 Instance
-Let's say we want to provision an EC2 instance on AWS using Terraform. We can achieve this by adding the following resource block to our configuration:
-
-```
-resource "aws_instance" "example" {
-  ami           = "ami-0c55b159cbfafe1f0"  // This should be replaced with your desired AMI ID
-  instance_type = "t2.micro"
-}
-```
-
-In this example:
-"aws_instance" is the resource type provided by the AWS provider.
-"example" is a name given to this particular instance, which can be referenced elsewhere in the configuration.
-"ami" specifies the Amazon Machine Image (AMI) to use for the instance.
-"instance_type" defines the instance type, such as t2.micro, t2.small, etc.
-When you run terraform apply, Terraform will create the specified EC2 instance in your AWS account based on the provided configuration.
-
-### Conclusion
 Terraform providers are powerful tools that enable infrastructure as code practitioners to manage resources across various cloud platforms and services. By understanding how to utilize providers and define resources, you can efficiently provision and manage your infrastructure using Terraform.
 
 
-## Terraform provider versions
+## Terraform init and provider versions
 Providers evolve over time to introduce new features, enhancements, and bug fixes. Consequently, different versions of providers are released to accommodate these changes. Managing provider versions becomes critical to leverage new functionalities, ensure compatibility with the underlying infrastructure, and maintain security.
 
 ### Version Constraints
@@ -66,12 +47,30 @@ Use version constraints to specify acceptable provider versions within a certain
 
 #### 1. Initializing Terraform:
 
-In your terraform.tf file, set the version to version = "~> 3.0.0" and run terraform init. This creates a file named .terraform.lock.hcl in the working directory, capturing the provider configuration and dependencies.
+In your terraform.tf file, set the version to version = "~> 3.0.0" and run terraform init. This creates a file named .terraform.lock.hcl in the working directory, capturing the provider configuration and dependencies. 
 
+```
+terraform {
+  # Declare the required providers for this configuration
+  required_providers {
+    # Specify the AWS provider with version constraints
+    aws = {
+      source  = "hashicorp/aws" # Source of the AWS provider plugin
+      version = "~> 3.0.0"       # Version constraints for the AWS provider
+    }
+  }
+}
+```
+
+Let's run terraform init to initialize terraform by downloading provider plugins.
+
+```
+terraform init
+```
 
 #### 2. Observations:
 
-- File `.terraform.lock.hcl` is created in the same working directory as main.tf. Content is as follow
+- After run `terraform init`, file `.terraform.lock.hcl` is created in the same working directory as main.tf. Content is as follow
 
 ```
 provider "registry.terraform.io/hashicorp/aws" {
@@ -95,10 +94,11 @@ provider "registry.terraform.io/hashicorp/aws" {
 
 - Binary file downloaded: .terraform/providers/registry.terraform.io/hashicorp/aws/3.0.0/darwin_amd64, this is the provider plugin, which will help us to call aws api and provision our infrastructur defnied accordingly.
 
+If new provider is added into the configuration file, you have to run `terraform init` again into to download the new provider plugins.
 
 ### Experimenting with Version Change:
 
-Changing the AWS provider version in terraform.tf to 4.1.0 and rerunning terraform init results in an error, as the new version doesn't match the specified constraint. The version constraint file `.terraform.lock.hcl` will only be created the 1st time when do terraform init and it will be reused afterwords.
+If we want to upgrade the provider version to a newer one. Let's say changing the AWS provider version in terraform.tf to 4.1.0 and rerunning `terraform init` will result in an error, as the new version doesn't match the specified constraint. The version constraint file `.terraform.lock.hcl` will only be created the 1st time when do `terraform init` and it will be reused afterwords.
 
 ```
 - Reusing previous version of hashicorp/aws from the dependency lock file
