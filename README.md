@@ -6,7 +6,13 @@
 
 ## Learn the core concepts of terraform in depth with practice
 
-In this tutorial, we'll delve into the process of provisioning and managing AWS EC2 instances using Terraform. Our primary goal is to gain insights into the inner workings of Terraform and its various functionalities. 
+In the realm of infrastructure as code (IaC), Terraform stands out as a robust tool for provisioning and managing infrastructure resources. In this tutorial, we'll delve into the process of provisioning and managing AWS EC2 instances using Terraform. Our primary goal is to gain insights into the inner workings of Terraform and its various functionalities. 
+<div align="center">
+    <img src="images/terraform arch.png" alt="terraform learning" width="700" height="400">
+    <br>
+    <br>
+</div>
+
 
 ## Table of contents
 
@@ -125,11 +131,13 @@ provider "registry.terraform.io/hashicorp/aws" {
 }
 ```
 
+It's advised to commit the dependency lock file .terraform.lock.hcl into your git repo so that the change of provider will be tracked with reviewed properly.
+
 ## Terraform plan 
 
 ### Introduction:
 
-In the realm of infrastructure as code (IaC), Terraform stands out as a robust tool for provisioning and managing infrastructure resources. Among its arsenal of features, the terraform plan command holds a special place, offering users invaluable insights into the changes that will be applied to their infrastructure before actually executing them. In this blog post, we'll delve into the depths of Terraform's plan feature, uncovering its significance, functionality, and practical applications through real-world examples.
+ Among all terraform commands, the `terraform plan` command holds a special place, offering users invaluable insights into the changes that will be applied to their infrastructure before actually executing them. In this section, we'll delve into the depths of Terraform's plan feature, uncovering its significance, functionality, and practical applications through real-world examples.
 
 ### Understanding Terraform Plan:
 Terraform's plan feature provides a preview of the changes Terraform intends to make to your infrastructure. It meticulously analyzes your configuration files (written in HashiCorp Configuration Language or HCL) and current state to generate an execution plan. This plan outlines the additions, modifications, and deletions Terraform will enact when applied.
@@ -137,16 +145,15 @@ Terraform's plan feature provides a preview of the changes Terraform intends to 
 ### The Anatomy of a Terraform Plan:
 Before executing terraform plan, Terraform compares the current state of your infrastructure to the desired state defined in your configuration files. It then categorizes the impending changes into three primary actions:
 
-`To Add`: Resources that will be created.
-`To Change`: Resources that will be modified.
-`To Destroy`: Resources that will be removed.
+- `To Add`: Resources that will be created.
+- `To Change`: Resources that will be modified.
+- `To Destroy`: Resources that will be removed.
 
 
-
-Let's dive into practical scenarios where Terraform's plan feature proves invaluable:
+Let's dive into practical scenarios where Terraform's plan feature:
 
 #### Example 1: Adding a New AWS EC2 Instance:
-Suppose you're tasked with adding a new AWS EC2 instance to your infrastructure. Before executing any Terraform commands, run `terraform plan` to preview the changes:
+Suppose you're tasked with adding a new AWS EC2 instance to your infrastructure. Before executing any Terraform commands, run `terraform plan` to preview the changes. You can see from this plan, terraform is about create one aws instace based on the resource definition in configruation files.
 
 ```
   + resource "aws_instance" "app_server" {
@@ -197,7 +204,7 @@ Plan: 1 to add, 0 to change, 0 to destroy.
 ```
 
 #### Example 2: Modifying EC2 tags:
-Next, let's consider a scenario where you need to modify the tags of existing EC2 instace. After making the necessary changes to your Terraform configuration, execute terraform plan to review the proposed modifications:
+Next, let's consider a scenario where you need to modify the tags of existing EC2 instace. After making the necessary changes to your Terraform configuration, execute terraform plan to review the proposed modifications, the tild symbol ~ here means the change is an in-palce replacement.
 
 ```
   ~ resource "aws_instance" "app_server" {
@@ -216,7 +223,7 @@ Plan: 0 to add, 1 to change, 0 to destroy.
 #### Example 3: Removing Unused Resources:
 In a cleanup scenario, you may want to remove unused resources from your infrastructure. By running terraform plan after updating your configuration to remove the resources, you can verify the planned deletions:
 
-```bash
+```
   # aws_instance.app_server will be destroyed
   # (because aws_instance.app_server is not in configuration)
   - resource "aws_instance" "app_server" {
@@ -298,8 +305,14 @@ The plan output will list the resources slated for removal, allowing you to conf
 
 
 #### Example 4: Drift changes in AWS through AWS console
-In a cleanup scenario, if you update the resource through manual action,l e.g. AWS console. By running terraform plan, you can see the terraform knows that there is change in tags of 
+In certain scenario, if you update the resource through manual action, e.g. AWS console. By running terraform plan, you can see the terraform knows that there is change in tags of 
 EC2 machine. This is interesting, how terraform knows that? Here is a diagram to show what terraform plan will do.
+
+<div align="center">
+    <img src="images/terraform-plan-diagram.png" alt="terraform plan" width="500" height="300">
+    <br>
+    <br>
+</div>
 
 ```bash
   # aws_instance.app_server will be updated in-place
@@ -315,12 +328,6 @@ EC2 machine. This is interesting, how terraform knows that? Here is a diagram to
 
 Plan: 0 to add, 1 to change, 0 to destroy.
 ```
-
-<div align="center">
-    <img src="images/terraform-plan-diagram.png" alt="terraform plan" width="500" height="300">
-    <br>
-    <br>
-</div>
 
 Terraform will refer to the configuration file, the state file and then find the managed resource in AWS through AWS provider plugin. The state file will help terraform to trace which resource in managed by terraform and you should not delete the state file. Terraform plan just refer to the tfstate file but it won't update it.
 
