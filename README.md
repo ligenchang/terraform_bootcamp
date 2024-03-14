@@ -4,7 +4,7 @@
     <br>
 </div>
 
-# Learn the core concepts of terraform in depth with practice
+## Learn the core concepts of terraform in depth with practice
 
 In this tutorial, we'll delve into the process of provisioning and managing AWS EC2 instances using Terraform. Our primary goal is to gain insights into the inner workings of Terraform and its various functionalities. 
 
