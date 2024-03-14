@@ -1,14 +1,19 @@
+<div align="center">
+    <img src="images/terraform-learning-in-depth.png" alt="terraform learning" width="400" height="250">
+    <br>
+    <br>
+</div>
+
 # Learn the core concepts of terraform in depth with practice
 
 In this tutorial, we'll delve into the process of provisioning and managing AWS EC2 instances using Terraform. Our primary goal is to gain insights into the inner workings of Terraform and its various functionalities. 
 
 ## Table of contents
 
-- [Provider](#provider)
-- [Provider versions](#provider-version)
-- [Terraform init](#terraform-init)
+- [Terraform providers](#terraform-providers)
+- [Provider versions](#terraform-provider-versions)
 - [Terraform plan](#terraform-plan)
-- [Terraform apply](#terraform-apply)
+- [Terraform apply](#deep-dive-into-terraform-apply)
 
 ## Terraform providers
 
@@ -325,12 +330,7 @@ Terraform's plan feature empowers infrastructure engineers with foresight and co
 
 
 
-
-
-
-
-
-## Deep Dive into Terraform Apply: A Comprehensive Guide with Examples
+## Deep Dive into Terraform Apply
 
 ### Introduction:
 Terraform is a powerful infrastructure as code tool that allows you to define and manage your infrastructure using a declarative configuration language. One of the key commands in Terraform is apply, which is used to apply the changes specified in your Terraform configuration to your infrastructure. In this blog post, we'll take a deep dive into the terraform apply command, exploring its features, options, and best practices with practical examples.
